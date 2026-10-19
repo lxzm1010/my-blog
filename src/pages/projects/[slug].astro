@@ -1,0 +1,89 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getProjects, getPosts } from '../../utils/content';
+import { url } from '../../utils/url';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content, headings } = await render(project);
+
+// 同一标签下还有哪些笔记，做一个"相关内容"的入口
+const posts = await getPosts();
+const relatedPosts = posts
+  .filter((post) => post.data.tags.some((tag) => project.data.tags.includes(tag)))
+  .slice(0, 3);
+---
+
+<BaseLayout title={project.data.title} description={project.data.summary} type="article">
+  <div class="container">
+    <a class="back-link" href={url('/projects')}>← 返回项目列表</a>
+
+    <div class={`project-hero accent-${project.data.accent}`}>
+      <span class="card__icon" aria-hidden="true">{project.data.icon}</span>
+      <h1 class="project-hero__title">{project.data.title}</h1>
+      <p class="project-hero__desc">{project.data.summary}</p>
+
+      <div class="project-meta">
+        <span class="chip chip--status">{project.data.status}</span>
+        <span class="chip">{project.data.period}</span>
+        {project.data.stack.map((tech) => <span class="chip chip--accent">{tech}</span>)}
+      </div>
+
+      {
+        (project.data.repo || project.data.demo) && (
+          <div class="project-links">
+            {project.data.demo && (
+              <a class="btn btn--primary" href={project.data.demo} target="_blank" rel="noopener">
+                在线预览 ↗
+              </a>
+            )}
+            {project.data.repo && (
+              <a class="btn btn--ghost" href={project.data.repo} target="_blank" rel="noopener">
+                源码仓库 ↗
+              </a>
+            )}
+          </div>
+        )
+      }
+    </div>
+
+    <article class="prose">
+      <Content />
+    </article>
+
+    {
+      relatedPosts.length > 0 && (
+        <div class="article-foot">
+          <div class="section__head">
+            <h2 class="section__title">相关笔记</h2>
+          </div>
+          <div class="post-list">
+            {relatedPosts.map((post) => (
+              <a class="post-item" href={url(`/blog/${post.id}`)}>
+                <span class="post-item__title">{post.data.title}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )
+    }
+
+    <div class="article-foot">
+      <div class="chips">
+        {project.data.tags.map((tag) => (
+          <a class="chip" href={url(`/tags/${tag}`)}>
+            #{tag}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { url } from '../utils/url';
+---
+
+<BaseLayout title="页面不存在" description="这个地址没有内容。">
+  <div class="container">
+    <div class="notfound">
+      <p class="notfound__code">404</p>
+      <p class="notfound__text">这个地址没有内容，可能是链接过期了，或者文章改名了。</p>
+      <div class="hero__actions" style="justify-content:center">
+        <a class="btn btn--primary" href={url('/')}>回首页</a>
+        <a class="btn btn--ghost" href={url('/projects')}>看项目</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

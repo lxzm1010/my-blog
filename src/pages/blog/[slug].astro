@@ -1,0 +1,76 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPosts } from '../../utils/content';
+import { url, formatDate, readingTime } from '../../utils/url';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const posts = await getPosts();
+const index = posts.findIndex((p) => p.id === post.id);
+const newer = index > 0 ? posts[index - 1] : undefined;
+const older = index < posts.length - 1 ? posts[index + 1] : undefined;
+---
+
+<BaseLayout title={post.data.title} description={post.data.summary} type="article">
+  <div class="container">
+    <a class="back-link" href={url('/blog')}>← 返回笔记列表</a>
+
+    <header class="article-head">
+      <h1 class="article-head__title">{post.data.title}</h1>
+      <div class="article-meta">
+        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+        <span class="article-meta__sep" aria-hidden="true"></span>
+        <span>约 {readingTime(post.body)} 分钟</span>
+        {
+          post.data.tags.length > 0 && (
+            <>
+              <span class="article-meta__sep" aria-hidden="true" />
+              <span style="display:flex;gap:6px;flex-wrap:wrap">
+                {post.data.tags.map((tag) => (
+                  <a class="chip" href={url(`/tags/${tag}`)}>
+                    #{tag}
+                  </a>
+                ))}
+              </span>
+            </>
+          )
+        }
+      </div>
+    </header>
+
+    <article class="prose">
+      <Content />
+    </article>
+
+    {
+      (newer || older) && (
+        <nav class="article-foot" aria-label="上一篇 / 下一篇">
+          <div class="post-list">
+            {newer && (
+              <a class="post-item" href={url(`/blog/${newer.id}`)}>
+                <span class="post-item__date">← 更新</span>
+                <span class="post-item__title">{newer.data.title}</span>
+              </a>
+            )}
+            {older && (
+              <a class="post-item" href={url(`/blog/${older.id}`)}>
+                <span class="post-item__date">更早 →</span>
+                <span class="post-item__title">{older.data.title}</span>
+              </a>
+            )}
+          </div>
+        </nav>
+      )
+    }
+  </div>
+</BaseLayout>

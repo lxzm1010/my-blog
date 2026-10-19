@@ -1,0 +1,41 @@
+---
+import { url } from '../utils/url';
+
+interface Props {
+  title: string;
+  summary: string;
+  href: string;
+  accent?: 'violet' | 'cyan' | 'amber' | 'rose' | 'emerald';
+  icon?: string;
+  stack?: string[];
+  status?: string;
+}
+
+const {
+  title,
+  summary,
+  href,
+  accent = 'violet',
+  icon = '◆',
+  stack = [],
+  status,
+} = Astro.props;
+
+const shown = stack.slice(0, 3);
+const rest = stack.length - shown.length;
+---
+
+<a class="card" href={url(href)}>
+  <div class={`card__cover accent-${accent}`}>
+    <span class="card__icon" aria-hidden="true">{icon}</span>
+  </div>
+  <div class="card__body">
+    <h3 class="card__title">{title}</h3>
+    <p class="card__desc">{summary}</p>
+    <div class="card__foot">
+      {status && <span class="chip chip--status">{status}</span>}
+      {shown.map((s) => <span class="chip">{s}</span>)}
+      {rest > 0 && <span class="chip">+{rest}</span>}
+    </div>
+  </div>
+</a>

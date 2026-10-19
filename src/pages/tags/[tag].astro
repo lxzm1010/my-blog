@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getPosts, getProjects, getAllTags } from '../../utils/content';
+import { url } from '../../utils/url';
+
+export async function getStaticPaths() {
+  const tags = await getAllTags();
+  return tags.map(({ tag }) => ({
+    params: { tag },
+  }));
+}
+
+const { tag } = Astro.params;
+
+const [posts, projects] = await Promise.all([getPosts(), getProjects()]);
+const taggedPosts = posts.filter((post) => post.data.tags.includes(tag));
+const taggedProjects = projects.filter((project) => project.data.tags.includes(tag));
+---
+
+<BaseLayout title={`#${tag}`} description={`标签 #${tag} 下的笔记与项目。`}>
+  <div class="container">
+    <a class="back-link" href={url('/blog')}>← 返回笔记列表</a>
+
+    <div class="page-head">
+      <h1 class="page-head__title">#{tag}</h1>
+      <p class="page-head__desc">
+        {taggedProjects.length} 个项目 · {taggedPosts.length} 篇笔记
+      </p>
+    </div>
+
+    {
+      taggedProjects.length > 0 && (
+        <section class="section" style="margin-top:0">
+          <div class="section__head">
+            <h2 class="section__title">相关项目</h2>
+          </div>
+          <div class="grid">
+            {taggedProjects.map((project) => (
+              <ProjectCard
+                title={project.data.title}
+                summary={project.data.summary}
+                href={`/projects/${project.id}`}
+                accent={project.data.accent}
+                icon={project.data.icon}
+                stack={project.data.stack}
+                status={project.data.status}
+              />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      taggedPosts.length > 0 && (
+        <section class="section">
+          <div class="section__head">
+            <h2 class="section__title">相关笔记</h2>
+          </div>
+          <div class="post-list">
+            {taggedPosts.map((post) => (
+              <PostCard
+                title={post.data.title}
+                summary={post.data.summary}
+                date={post.data.date}
+                href={`/blog/${post.id}`}
+              />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>

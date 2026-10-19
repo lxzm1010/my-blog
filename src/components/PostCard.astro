@@ -1,0 +1,31 @@
+---
+import { url, formatDate } from '../utils/url';
+
+interface Props {
+  title: string;
+  summary?: string;
+  date: Date;
+  href: string;
+  tags?: string[];
+  showSummary?: boolean;
+}
+
+const { title, summary, date, href, tags = [], showSummary = true } = Astro.props;
+---
+
+<a class="post-item" href={url(href)}>
+  <time class="post-item__date" datetime={date.toISOString()}>{formatDate(date)}</time>
+  <span>
+    <span class="post-item__title">{title}</span>
+    {showSummary && summary && <span class="post-item__summary">{summary}</span>}
+  </span>
+  {
+    tags.length > 0 && (
+      <span class="post-item__tags">
+        {tags.slice(0, 2).map((t) => (
+          <span class="chip">{t}</span>
+        ))}
+      </span>
+    )
+  }
+</a>

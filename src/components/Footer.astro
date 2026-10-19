@@ -1,0 +1,19 @@
+---
+import { url } from '../utils/url';
+import { SITE } from '../consts';
+
+const YEAR = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <p style="margin:0">
+      © {YEAR} {SITE.author} · 用 <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> 构建
+    </p>
+    <div class="site-footer__links">
+      <a href={url('/rss.xml')}>RSS</a>
+      <a href={SITE.github} target="_blank" rel="noopener">GitHub</a>
+      <a href={url('/about')}>关于</a>
+    </div>
+  </div>
+</footer>

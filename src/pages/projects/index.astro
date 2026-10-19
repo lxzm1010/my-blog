@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getProjects } from '../../utils/content';
+
+const projects = await getProjects();
+const featured = projects.filter((p) => p.data.featured);
+const rest = projects.filter((p) => !p.data.featured);
+---
+
+<BaseLayout
+  title="项目"
+  description="我做过的项目：数据可视化、桌面工具、爬虫与自动化。"
+>
+  <div class="container">
+    <div class="page-head">
+      <h1 class="page-head__title">项目</h1>
+      <p class="page-head__desc">
+        每个项目都会写清楚四件事：想解决什么问题、用的什么技术、卡在哪里、最后怎么解决的。
+        右上角的标签是技术栈，可以直接点进详情看。
+      </p>
+    </div>
+
+    {
+      featured.length > 0 && (
+        <section class="section" style="margin-top:0">
+          <div class="section__head">
+            <h2 class="section__title">精选</h2>
+          </div>
+          <div class="grid">
+            {featured.map((project) => (
+              <ProjectCard
+                title={project.data.title}
+                summary={project.data.summary}
+                href={`/projects/${project.id}`}
+                accent={project.data.accent}
+                icon={project.data.icon}
+                stack={project.data.stack}
+                status={project.data.status}
+              />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      rest.length > 0 && (
+        <section class="section">
+          <div class="section__head">
+            <h2 class="section__title">其他项目</h2>
+          </div>
+          <div class="grid">
+            {rest.map((project) => (
+              <ProjectCard
+                title={project.data.title}
+                summary={project.data.summary}
+                href={`/projects/${project.id}`}
+                accent={project.data.accent}
+                icon={project.data.icon}
+                stack={project.data.stack}
+                status={project.data.status}
+              />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      projects.length === 0 && (
+        <div class="empty">
+          <p class="empty__title">还没有项目</p>
+          <p>
+            在 <code>src/content/projects/</code> 里新建一个 .md 文件开始。
+          </p>
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>

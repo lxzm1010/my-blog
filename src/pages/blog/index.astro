@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPosts, getAllTags, groupByYear } from '../../utils/content';
+import { url } from '../../utils/url';
+
+const posts = await getPosts();
+const tags = await getAllTags();
+const groups = groupByYear(posts, (post) => post.data.date);
+---
+
+<BaseLayout title="笔记" description="技术笔记、踩坑记录和折腾过程。">
+  <div class="container">
+    <div class="page-head">
+      <h1 class="page-head__title">笔记</h1>
+      <p class="page-head__desc">
+        写代码时遇到的问题、当时的判断，和最后验证过的答案。大多是给三个月后的自己看的。
+      </p>
+    </div>
+
+    {
+      tags.length > 0 && (
+        <div class="chips" style="margin-bottom:40px">
+          {tags.map(({ tag, count }) => (
+            <a class="chip" href={url(`/tags/${tag}`)}>
+              #{tag}
+              <span style="opacity:.55">{count}</span>
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      groups.length > 0 ? (
+        groups.map(({ year, items }) => (
+          <section class="section" style="margin-top:40px">
+            <div class="section__head">
+              <h2 class="section__title">{year}</h2>
+              <span class="section__more">{items.length} 篇</span>
+            </div>
+            <div class="post-list">
+              {items.map((post) => (
+                <PostCard
+                  title={post.data.title}
+                  summary={post.data.summary}
+                  date={post.data.date}
+                  href={`/blog/${post.id}`}
+                  tags={post.data.tags}
+                />
+              ))}
+            </div>
+          </section>
+        ))
+      ) : (
+        <div class="empty">
+          <p class="empty__title">还没有笔记</p>
+          <p>
+            在 <code>src/content/blog/</code> 里新建一个 .md 文件就能发第一篇。
+          </p>
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>

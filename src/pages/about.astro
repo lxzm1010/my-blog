@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../consts';
+---
+
+<BaseLayout title="关于" description="关于我，以及这个站点是怎么搭的。">
+  <div class="container">
+    <div class="page-head">
+      <h1 class="page-head__title">关于</h1>
+      <p class="page-head__desc">写代码的人，喜欢把东西做出来再讲清楚。</p>
+    </div>
+
+    <article class="prose">
+      <p>
+        你好，我是 <strong>{SITE.author}</strong>。这里是我的项目橱窗兼技术笔记，
+        主要记三件事：做过什么、当时怎么想的、以及踩过的坑后来是怎么爬出来的。
+      </p>
+
+      <h2>我在做什么</h2>
+      <p>
+        大部分时间在做数据相关的活儿——可视化大屏、爬虫抓取、脚本自动化，
+        偶尔写点桌面小工具解决自己的痒处。喜欢"能跑起来的东西"胜过"看起来很完备的方案"。
+      </p>
+
+      <h2>这个站点</h2>
+      <p>
+        用 <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> 搭的静态站点，
+        没有数据库、没有后端，所有内容都是 <code>src/content/</code> 下的 Markdown 文件。
+        托管在 GitHub Pages 上，推一次代码就自动发布一次。
+      </p>
+      <ul>
+        <li>文章和项目都是 Markdown，frontmatter 有类型校验，写错字段构建会报错</li>
+        <li>除了主题切换按钮，全站几乎不加载 JavaScript</li>
+        <li>亮色 / 暗色主题跟随系统，也可以手动切换</li>
+      </ul>
+
+      <h2>找我</h2>
+      <ul>
+        <li>
+          GitHub：<a href={SITE.github} target="_blank" rel="noopener"
+            >{SITE.github.replace('https://', '')}</a
+          >
+        </li>
+      </ul>
+      <p>
+        想聊什么，直接在这个博客的仓库里提 issue，或者对某篇文章开个 PR 都行——比邮件更容易被看见。
+      </p>
+
+      <blockquote>
+        <p>这段文字在 <code>src/pages/about.astro</code> 里，直接改成你自己的就好。</p>
+      </blockquote>
+    </article>
+  </div>
+</BaseLayout>

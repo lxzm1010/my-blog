@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import PostCard from '../components/PostCard.astro';
+import { getProjects, getPosts } from '../utils/content';
+import { url } from '../utils/url';
+import { SITE } from '../consts';
+
+const projects = await getProjects();
+const posts = await getPosts();
+
+const featured = projects.filter((p) => p.data.featured).slice(0, 3);
+const recent = posts.slice(0, 5);
+---
+
+<BaseLayout>
+  <section class="hero">
+    <div class="container">
+      <p class="hero__eyebrow">
+        <span class="hero__dot" aria-hidden="true"></span>
+        {SITE.hero.status}
+      </p>
+      <h1 class="hero__title">
+        把每个做过的项目，<br />
+        讲成一个<span class="grad">看得懂的故事</span>。
+      </h1>
+      <p class="hero__lead">{SITE.hero.lead}</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href={url('/projects')}>
+          看项目
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h13M13 6l6 6-6 6"></path>
+          </svg>
+        </a>
+        <a class="btn btn--ghost" href={url('/blog')}>读笔记</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <section class="section" aria-labelledby="featured-title">
+      <div class="section__head">
+        <h2 class="section__title" id="featured-title">精选项目</h2>
+        <a class="section__more" href={url('/projects')}>全部 {projects.length} 个项目 →</a>
+      </div>
+
+      {
+        featured.length > 0 ? (
+          <div class="grid">
+            {featured.map((project) => (
+              <ProjectCard
+                title={project.data.title}
+                summary={project.data.summary}
+                href={`/projects/${project.id}`}
+                accent={project.data.accent}
+                icon={project.data.icon}
+                stack={project.data.stack}
+                status={project.data.status}
+              />
+            ))}
+          </div>
+        ) : (
+          <div class="empty">
+            <p class="empty__title">还没有精选项目</p>
+            <p>
+              在 <code>src/content/projects/</code> 里新建一个 .md 文件，把 frontmatter 中的
+              <code>featured</code> 设为 <code>true</code>，它就会出现在这里。
+            </p>
+          </div>
+        )
+      }
+    </section>
+
+    <section class="section" aria-labelledby="recent-title">
+      <div class="section__head">
+        <h2 class="section__title" id="recent-title">最近笔记</h2>
+        <a class="section__more" href={url('/blog')}>全部笔记 →</a>
+      </div>
+
+      {
+        recent.length > 0 ? (
+          <div class="post-list">
+            {recent.map((post) => (
+              <PostCard
+                title={post.data.title}
+                summary={post.data.summary}
+                date={post.data.date}
+                href={`/blog/${post.id}`}
+                tags={post.data.tags}
+                showSummary={false}
+              />
+            ))}
+          </div>
+        ) : (
+          <div class="empty">
+            <p class="empty__title">还没有笔记</p>
+            <p>
+              在 <code>src/content/blog/</code> 里新建一个 .md 文件就能发第一篇。
+            </p>
+          </div>
+        )
+      }
+    </section>
+  </div>
+</BaseLayout>
