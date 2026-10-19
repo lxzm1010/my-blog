@@ -14,8 +14,12 @@
 
 ```bash
 pnpm install    # 首次
-pnpm dev        # http://localhost:4321
+pnpm dev        # http://localhost:4321/my-blog
 ```
+
+> 本地地址后面那个 `/my-blog` 不是多余的：`astro.config.mjs` 里 `base` 配成了 `/my-blog`
+> （为了 GitHub Pages 的仓库路径），本地开发也会跟着带上这个前缀。
+> 直接访问 `http://localhost:4321` 会 404。
 
 其他命令：
 
@@ -173,17 +177,31 @@ git push -u origin main
 
 ## 自定义外观
 
-所有颜色都是 `src/styles/global.css` 顶部的 CSS 变量，改这几行就能换整套配色：
+站点是科幻风：深空背景 + 霓虹青紫 + 坐标网格 + HUD 角标 + 等宽数据标签。
+**暗色是默认**，亮色是「日间实验室」变体，两套都由同一批变量名驱动。
+
+所有颜色、发光都在 `src/styles/global.css` 顶部的变量块里，改这几行就能换掉整个气质：
 
 ```css
 :root {
-  --accent: #6d4aff;                                    /* 主题色 */
-  --grad: linear-gradient(135deg, #7c5cff, #3ec5f0);    /* 渐变（logo、标题、按钮） */
+  --accent: #2ae4ff;      /* 主色：导航高亮、按钮、行内代码、各种发光 */
+  --accent-2: #a06bff;    /* 副色：顶栏扫描线、引用块左边框 */
+  --accent-3: #ff2e9a;    /* 点缀色：hero 星云光斑 */
+  --grad: linear-gradient(120deg, #2ae4ff, #7c6cff 52%, #ff2e9a);  /* 标题渐变、详情页光带、404 */
+  --glow-sm: 0 0 12px rgba(42, 228, 255, 0.22);                    /* 小发光，hover 用 */
 }
 ```
 
-暗色主题的变量在本文件后面 `:root[data-theme='dark']` 里，以及
-`@media (prefers-color-scheme: dark)` 那一段（跟随系统时用）。
+亮色主题的同一批变量在 `:root[data-theme='light']` 和
+`@media (prefers-color-scheme: light)` 两段里（后者用于"跟随系统"这种情况），
+改配色时三处要一起改。
+
+想调科幻感的强弱：
+
+- 网格和扫描线：`--grid-line` 的透明度、`.hero::after` 里那个 `rgba(120, 200, 255, 0.03)`
+- 卡片四角括号：`.card::before` 的 `opacity`（默认 0.5，hover 时 1）
+- 圆角硬度：`--radius` / `--radius-lg`（现在 6px / 10px，调大就更"圆润"，调 0 就更"硬核"）
+- 完全不想要科幻感：把 `--glow-*` 全设成 `none`、`--grid-line` 设透明即可回到素净风格
 
 ## 以后想在线写文章？
 

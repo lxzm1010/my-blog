@@ -9,6 +9,8 @@ interface Props {
   icon?: string;
   stack?: string[];
   status?: string;
+  /** 卡片左上角的序号，像 HUD 里的条目编号 */
+  index?: number;
 }
 
 const {
@@ -19,14 +21,17 @@ const {
   icon = '◆',
   stack = [],
   status,
+  index,
 } = Astro.props;
 
 const shown = stack.slice(0, 3);
 const rest = stack.length - shown.length;
+const label = typeof index === 'number' ? String(index).padStart(2, '0') : undefined;
 ---
 
 <a class="card" href={url(href)}>
   <div class={`card__cover accent-${accent}`}>
+    {label && <span class="card__index" aria-hidden="true">{label}</span>}
     <span class="card__icon" aria-hidden="true">{icon}</span>
   </div>
   <div class="card__body">

@@ -28,7 +28,7 @@ const rest = projects.filter((p) => !p.data.featured);
             <h2 class="section__title">精选</h2>
           </div>
           <div class="grid">
-            {featured.map((project) => (
+            {featured.map((project, i) => (
               <ProjectCard
                 title={project.data.title}
                 summary={project.data.summary}
@@ -37,6 +37,7 @@ const rest = projects.filter((p) => !p.data.featured);
                 icon={project.data.icon}
                 stack={project.data.stack}
                 status={project.data.status}
+                index={i + 1}
               />
             ))}
           </div>
@@ -51,7 +52,7 @@ const rest = projects.filter((p) => !p.data.featured);
             <h2 class="section__title">其他项目</h2>
           </div>
           <div class="grid">
-            {rest.map((project) => (
+            {rest.map((project, i) => (
               <ProjectCard
                 title={project.data.title}
                 summary={project.data.summary}
@@ -60,6 +61,7 @@ const rest = projects.filter((p) => !p.data.featured);
                 icon={project.data.icon}
                 stack={project.data.stack}
                 status={project.data.status}
+                index={featured.length + i + 1}
               />
             ))}
           </div>

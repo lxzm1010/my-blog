@@ -37,7 +37,7 @@ const taggedProjects = projects.filter((project) => project.data.tags.includes(t
             <h2 class="section__title">相关项目</h2>
           </div>
           <div class="grid">
-            {taggedProjects.map((project) => (
+            {taggedProjects.map((project, i) => (
               <ProjectCard
                 title={project.data.title}
                 summary={project.data.summary}
@@ -46,6 +46,7 @@ const taggedProjects = projects.filter((project) => project.data.tags.includes(t
                 icon={project.data.icon}
                 stack={project.data.stack}
                 status={project.data.status}
+                index={i + 1}
               />
             ))}
           </div>

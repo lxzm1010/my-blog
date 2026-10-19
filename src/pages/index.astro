@@ -11,6 +11,11 @@ const posts = await getPosts();
 
 const featured = projects.filter((p) => p.data.featured).slice(0, 3);
 const recent = posts.slice(0, 5);
+
+// HUD 数据条上的统计，全部来自真实内容而不是写死的数字
+const pad = (n: number) => String(n).padStart(2, '0');
+const activeCount = projects.filter((p) => p.data.status === '在研').length;
+const stackCount = new Set(projects.flatMap((p) => p.data.stack)).size;
 ---
 
 <BaseLayout>
@@ -34,6 +39,25 @@ const recent = posts.slice(0, 5);
         </a>
         <a class="btn btn--ghost" href={url('/blog')}>读笔记</a>
       </div>
+
+      <div class="hud">
+        <div class="hud__item">
+          <span class="hud__key">projects</span>
+          <span class="hud__val">{pad(projects.length)}</span>
+        </div>
+        <div class="hud__item">
+          <span class="hud__key">notes</span>
+          <span class="hud__val">{pad(posts.length)}</span>
+        </div>
+        <div class="hud__item">
+          <span class="hud__key">active</span>
+          <span class="hud__val">{pad(activeCount)}</span>
+        </div>
+        <div class="hud__item">
+          <span class="hud__key">stack</span>
+          <span class="hud__val">{pad(stackCount)}</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -47,7 +71,7 @@ const recent = posts.slice(0, 5);
       {
         featured.length > 0 ? (
           <div class="grid">
-            {featured.map((project) => (
+            {featured.map((project, i) => (
               <ProjectCard
                 title={project.data.title}
                 summary={project.data.summary}
@@ -56,6 +80,7 @@ const recent = posts.slice(0, 5);
                 icon={project.data.icon}
                 stack={project.data.stack}
                 status={project.data.status}
+                index={i + 1}
               />
             ))}
           </div>
